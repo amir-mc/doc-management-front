@@ -3,6 +3,7 @@ export interface ReportCard {
   userId: number;
   title: string;
   filePath: string;
+  password:string;
   description?: string;
   uploadedAt: string;
   uploadedBy: number;
@@ -19,6 +20,7 @@ export interface User {
   firstName: string;
   lastName: string;
   fatherName: string;
+  password:string;
   profileImage?: string;
   role: 'USER' | 'ADMIN';
   createdAt: string;
