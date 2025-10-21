@@ -1,71 +1,64 @@
+
+import { CreateReportCardRequest, CreateUserRequest, ReportCard, UpdateUserRequest, User } from '@/types/user';
 import axios from 'axios';
-import { User, CreateUserRequest, UpdateUserRequest, ReportCard, CreateReportCardRequest } from '../types/user';
 
 const API_BASE_URL = 'http://localhost:3001';
 
 const api = axios.create({
   baseURL: API_BASE_URL,
-  timeout: 30000,
+  withCredentials: false, // چون ما توکن می‌فرستیم، نیازی به cookie نیست
 });
 
-// اضافه کردن توکن به تمام درخواست‌ها
+// 🧠 افزودن توکن JWT از sessionStorage یا localStorage به هر درخواست
 api.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem('token');
+    const token =
+      sessionStorage.getItem('token') || localStorage.getItem('token');
+
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
+    } else {
+      console.warn('⚠️ No token found in storage!');
     }
+
     return config;
   },
-  (error) => {
-    return Promise.reject(error);
-  }
+  (error) => Promise.reject(error)
 );
 
-// مدیریت خطاهای authentication و پاسخ‌های غیر آرایه
+// 🧩 هندل خطاهای پاسخ
 api.interceptors.response.use(
-  (response) => {
-    // اگر پاسخ آرایه نیست، آن را به آرایه تبدیل کن
-    if (response.data && !Array.isArray(response.data)) {
-      console.warn('API response is not an array:', response.data);
-      // اگر پاسخ یک آبجکت است، آن را در یک آرایه قرار بده
-      if (typeof response.data === 'object' && response.data !== null) {
-        response.data = [response.data];
-      } else {
-        response.data = [];
-      }
-    }
-    return response;
-  },
+  (response) => response,
   (error) => {
-    if (error.response?.status === 401) {
-      localStorage.removeItem('token');
-      localStorage.removeItem('user');
-      window.location.href = '/login';
-    }
+    console.error('❌ API Response - Error:', {
+      status: error.response?.status,
+      url: error.config?.url,
+      message: error.message,
+    });
     return Promise.reject(error);
   }
 );
 
-export const authApi = {
-  login: (credentials: { nationalCode: string; password: string }) =>
-    api.post('/auth/login', credentials).then(response => response.data),
+// ----------------------------
+// تعریف API های جداگانه
+// ----------------------------
 
-  register: (userData: any) =>
-    api.post('/auth/register', userData).then(response => response.data),
-};
+
 
 export const userApi = {
+  // دریافت همه کاربران
   getUsers: (): Promise<User[]> => 
     api.get('/users').then(response => {
       const data = response.data;
-      // اطمینان از اینکه پاسخ آرایه است
+      console.log('📊 Users API Response:', data);
       return Array.isArray(data) ? data : [];
     }),
 
+  // ایجاد کاربر جدید
   createUser: (userData: CreateUserRequest): Promise<User> =>
     api.post('/users', userData).then(response => response.data),
 
+  // آپلود عکس پروفایل
   uploadProfileImage: (userId: number, imageFile: File): Promise<User> => {
     const formData = new FormData();
     formData.append('image', imageFile);
@@ -77,14 +70,22 @@ export const userApi = {
     }).then(response => response.data);
   },
 
+  // حذف کاربر
   deleteUser: (userId: number): Promise<void> =>
     api.delete(`/users/${userId}`),
 
+  // دریافت کاربر به همراه کارنامه‌ها
   getUserWithReportCards: (userId: number): Promise<User> =>
     api.get(`/users/${userId}/report-cards`).then(response => response.data),
+
+  // آپدیت کاربر
+  updateUser: (userId: number, userData: UpdateUserRequest): Promise<User> =>
+    api.patch(`/users/${userId}`, userData).then(response => response.data),
 };
 
+// Report Cards API
 export const reportCardApi = {
+  // ایجاد کارنامه جدید
   createReportCard: (reportCardData: CreateReportCardRequest, file: File): Promise<ReportCard> => {
     const formData = new FormData();
     formData.append('file', file);
@@ -96,6 +97,9 @@ export const reportCardApi = {
       formData.append('description', reportCardData.description);
     }
 
+    console.log('📁 Creating report card with data:', reportCardData);
+    console.log('📁 File info:', { name: file.name, size: file.size, type: file.type });
+
     return api.post('/report-cards', formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
@@ -103,19 +107,32 @@ export const reportCardApi = {
     }).then(response => response.data);
   },
 
+  // دریافت همه کارنامه‌ها
   getReportCards: (): Promise<ReportCard[]> =>
     api.get('/report-cards').then(response => {
       const data = response.data;
-      // اطمینان از اینکه پاسخ آرایه است
+      console.log('📊 ReportCards API Response:', data);
       return Array.isArray(data) ? data : [];
     }),
 
+  // دریافت کارنامه‌های یک کاربر
   getReportCardsByUser: (userId: number): Promise<ReportCard[]> =>
     api.get(`/report-cards/user/${userId}`).then(response => {
       const data = response.data;
       return Array.isArray(data) ? data : [];
     }),
 
+  // دریافت یک کارنامه خاص
+  getReportCard: (reportCardId: number): Promise<ReportCard> =>
+    api.get(`/report-cards/${reportCardId}`).then(response => response.data),
+
+  // آپدیت کارنامه
+  updateReportCard: (reportCardId: number, reportCardData: { title?: string; description?: string }): Promise<ReportCard> =>
+    api.patch(`/report-cards/${reportCardId}`, reportCardData).then(response => response.data),
+
+  // حذف کارنامه
   deleteReportCard: (reportCardId: number): Promise<void> =>
     api.delete(`/report-cards/${reportCardId}`),
 };
+
+export default api;

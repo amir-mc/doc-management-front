@@ -1,8 +1,10 @@
+//components/admindashboard.tsx
 "use client";
 
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { DashboardStats, User, ReportCard } from '../types/dashboard';
+import { userApi, reportCardApi } from '../services/api';
 
 const AdminDashboard: React.FC = () => {
   const [stats, setStats] = useState<DashboardStats>({
@@ -24,11 +26,11 @@ const AdminDashboard: React.FC = () => {
       setLoading(true);
       setError(null);
       
-      const token = localStorage.getItem('token');
-      const userData = localStorage.getItem('user');
+      const token = sessionStorage.getItem('token');
+      const userData = sessionStorage.getItem('user');
       
-      console.log('Token from localStorage:', token);
-      console.log('User data from localStorage:', userData);
+      console.log('🔑 Dashboard - Token from sessionStorage:', token ? `YES (length: ${token.length})` : 'NO');
+      console.log('👤 Dashboard - User data from sessionStorage:', userData ? 'YES' : 'NO');
 
       if (!token) {
         setError('توکن احراز هویت یافت نشد. لطفاً دوباره وارد شوید.');
@@ -36,77 +38,27 @@ const AdminDashboard: React.FC = () => {
         return;
       }
 
-      // بررسی معتبر بودن توکن
-      try {
-        const payload = JSON.parse(atob(token.split('.')[1]));
-        const isExpired = payload.exp * 1000 < Date.now();
-        
-        if (isExpired) {
-          setError('توکن منقضی شده است. لطفاً دوباره وارد شوید.');
-          localStorage.removeItem('token');
-          localStorage.removeItem('user');
-          router.push('/login');
-          return;
-        }
-      } catch (e) {
-        console.error('Error parsing token:', e);
-        setError('توکن نامعتبر است. لطفاً دوباره وارد شوید.');
-        localStorage.removeItem('token');
-        localStorage.removeItem('user');
-        router.push('/login');
-        return;
-      }
+      console.log('📊 Dashboard - Loading users and report cards...');
 
-      const headers = {
-        'Authorization': `Bearer ${token}`,
-        'Content-Type': 'application/json'
-      };
-
-      console.log('Making API requests with headers:', headers);
-
-      const [usersRes, reportCardsRes] = await Promise.all([
-        fetch('http://localhost:3001/users', { headers }),
-        fetch('http://localhost:3001/report-cards', { headers }),
+      const [users, reportCards] = await Promise.all([
+        userApi.getUsers(),
+        reportCardApi.getReportCards()
       ]);
 
-      console.log('Users API response status:', usersRes.status);
-      console.log('ReportCards API response status:', reportCardsRes.status);
-
-      // بررسی وضعیت پاسخ
-      if (usersRes.status === 401) {
-        setError('دسترسی غیرمجاز. لطفاً دوباره وارد شوید.');
-        localStorage.removeItem('token');
-        localStorage.removeItem('user');
-        router.push('/login');
-        return;
-      }
-
-      if (!usersRes.ok) {
-        throw new Error(`خطا در دریافت کاربران: ${usersRes.status}`);
-      }
-
-      if (!reportCardsRes.ok) {
-        throw new Error(`خطا در دریافت کارنامه‌ها: ${reportCardsRes.status}`);
-      }
-
-      const users = await usersRes.json();
-      const reportCards = await reportCardsRes.json();
-
-      console.log('Users data:', users);
-      console.log('ReportCards data:', reportCards);
-
-      // اطمینان از اینکه داده‌ها آرایه هستند
-      const usersArray: User[] = Array.isArray(users) ? users : [];
-      const reportCardsArray: ReportCard[] = Array.isArray(reportCards) ? reportCards : [];
+      console.log('📊 Dashboard - Users loaded:', users.length);
+      console.log('📊 Dashboard - Report cards loaded:', reportCards.length);
 
       setStats({
-        totalUsers: usersArray.length,
-        totalReportCards: reportCardsArray.length,
-        recentUsers: usersArray.slice(0, 5),
-        recentReportCards: reportCardsArray.slice(0, 5),
+        totalUsers: users.length,
+        totalReportCards: reportCards.length,
+        recentUsers: users.slice(0, 5),
+        recentReportCards: reportCards.slice(0, 5),
       });
+
+      console.log('✅ Dashboard - Data loaded successfully');
+
     } catch (error: any) {
-      console.error('Error loading dashboard data:', error);
+      console.error('❌ Dashboard - Error loading data:', error);
       setError(error.message || 'خطا در بارگذاری داده‌ها');
     } finally {
       setLoading(false);
@@ -118,8 +70,9 @@ const AdminDashboard: React.FC = () => {
   };
 
   const handleLogout = () => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
+    console.log('🚪 Logging out...');
+    sessionStorage.removeItem('token');
+    sessionStorage.removeItem('user');
     router.push('/login');
   };
 

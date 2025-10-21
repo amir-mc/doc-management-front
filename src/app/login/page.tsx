@@ -1,6 +1,7 @@
+//src/app/login/page.tsx
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 
 const Login: React.FC = () => {
@@ -10,12 +11,21 @@ const Login: React.FC = () => {
   const [error, setError] = useState('');
   const router = useRouter();
 
+  useEffect(() => {
+    // پاک کردن توکن قبلی هنگام ورود به صفحه login
+    sessionStorage.removeItem('token');
+    sessionStorage.removeItem('user');
+    console.log('🔄 Login page - Cleared previous tokens from sessionStorage');
+  }, []);
+
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError('');
 
     try {
+      console.log('🚀 Login attempt started with:', { nationalCode, password });
+      
       const response = await fetch('http://localhost:3001/auth/login', {
         method: 'POST',
         headers: {
@@ -24,29 +34,35 @@ const Login: React.FC = () => {
         body: JSON.stringify({ nationalCode, password }),
       });
 
+      console.log('📨 Login API Response Status:', response.status);
+      console.log('📨 Login API Response Headers:', Object.fromEntries(response.headers.entries()));
+
       const data = await response.json();
+      console.log('📨 Login API Response Data:', data);
 
       if (!response.ok) {
-        throw new Error(data.message || 'خطا در ورود');
+        console.error('❌ Login API Error:', data);
+        throw new Error(data.message || `خطا در ورود: ${response.status}`);
       }
 
-      console.log('Login successful, received data:', data);
+      // ذخیره توکن و اطلاعات کاربر در sessionStorage
+      console.log('💾 Saving token to sessionStorage...');
+ sessionStorage.setItem('token', data.access_token);
+sessionStorage.setItem('user', JSON.stringify(data.user));
+      // بررسی ذخیره‌سازی
+      const savedToken = sessionStorage.getItem('token');
+      const savedUser = sessionStorage.getItem('user');
+      console.log('✅ Token saved to sessionStorage:', savedToken ? `YES (length: ${savedToken.length})` : 'NO');
+      console.log('✅ User data saved to sessionStorage:', savedUser ? 'YES' : 'NO');
+      console.log('✅ Saved user data:', savedUser);
 
-      // ذخیره توکن و اطلاعات کاربر
-      localStorage.setItem('token', data.access_token);
-      localStorage.setItem('user', JSON.stringify(data.user));
+      console.log('🔄 Redirecting to admin panel...');
 
-      console.log('Token saved to localStorage:', data.access_token);
-      console.log('User data saved to localStorage:', data.user);
+      // استفاده از window.location برای هدایت کامل
+      window.location.href = '/admin';
 
-      // هدایت بر اساس نقش کاربر
-      if (data.user.role === 'ADMIN') {
-        router.push('/admin');
-      } else {
-        router.push('/dashboard');
-      }
     } catch (error: any) {
-      console.error('Login error:', error);
+      console.error('❌ Login process failed:', error);
       setError(error.message);
     } finally {
       setLoading(false);
@@ -64,7 +80,7 @@ const Login: React.FC = () => {
         <form className="mt-8 space-y-6" onSubmit={handleLogin}>
           {error && (
             <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
-              {error}
+              <strong>خطا:</strong> {error}
             </div>
           )}
           <div>

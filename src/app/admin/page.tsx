@@ -1,3 +1,4 @@
+//src/app/admin/page.tsx
 "use client";
 
 import React, { useState, useEffect } from 'react';
@@ -9,35 +10,68 @@ import AdminDashboard from '../../components/AdminDashboard';
 const AdminPage: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'dashboard' | 'users' | 'reportCards'>('dashboard');
   const [user, setUser] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
   const router = useRouter();
 
   useEffect(() => {
-    const userData = localStorage.getItem('user');
-    const token = localStorage.getItem('token');
+    console.log('🔄 Admin page - Checking authentication...');
+    
+    const userData = sessionStorage.getItem('user');
+    const token = sessionStorage.getItem('token');
+
+    console.log('🔍 Admin page - Token from sessionStorage:', token ? `YES (length: ${token.length})` : 'NO');
+    console.log('🔍 Admin page - User data from sessionStorage:', userData ? 'YES' : 'NO');
 
     if (!token || !userData) {
+      console.log('❌ Admin page - No token or user data, redirecting to login');
       router.push('/login');
       return;
     }
 
-    const userObj = JSON.parse(userData);
-    if (userObj.role !== 'ADMIN') {
-      router.push('/dashboard');
-      return;
-    }
+    try {
+      const userObj = JSON.parse(userData);
+      console.log('🔍 Admin page - User role:', userObj.role);
+      
+      if (userObj.role !== 'ADMIN') {
+        console.log('❌ Admin page - User is not ADMIN, redirecting to dashboard');
+        router.push('/dashboard');
+        return;
+      }
 
-    setUser(userObj);
+      console.log('✅ Admin page - Authentication successful');
+      setUser(userObj);
+    } catch (error) {
+      console.error('❌ Admin page - Error parsing user data:', error);
+      router.push('/login');
+    } finally {
+      setLoading(false);
+    }
   }, [router]);
 
   const handleLogout = () => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
+    console.log('🚪 Logging out...');
+    sessionStorage.removeItem('token');
+    sessionStorage.removeItem('user');
     router.push('/login');
   };
 
-  if (!user) {
-    return <div>در حال بارگذاری...</div>;
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-lg">در حال بارگذاری...</div>
+      </div>
+    );
   }
+
+  if (!user) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-lg text-red-600">خطا در بارگذاری اطلاعات کاربر</div>
+      </div>
+    );
+  }
+
+  console.log('🎯 Admin page - Rendering admin interface');
 
   return (
     <div className="min-h-screen bg-gray-50">
