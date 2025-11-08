@@ -100,7 +100,7 @@ const UserManagement: React.FC = () => {
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
-        <h1 className="text-3xl font-bold">مدیریت کاربران</h1>
+        <h1 className="text-3xl font-bold text-gray-800">مدیریت کاربران</h1>
         <button
           onClick={() => setShowCreateForm(true)}
           className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
@@ -117,7 +117,7 @@ const UserManagement: React.FC = () => {
             placeholder="جستجو بر اساس کد ملی، نام، نام خانوادگی، نام پدر..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="flex-1 p-2 border rounded focus:border-blue-500 focus:outline-none"
+            className="flex-1 p-2 text-gray-800 border rounded focus:border-blue-500 focus:outline-none"
           />
           <button
             onClick={filterUsers}
@@ -135,7 +135,7 @@ const UserManagement: React.FC = () => {
       {showCreateForm && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white p-6 rounded-lg w-96 max-h-[90vh] overflow-y-auto">
-            <h2 className="text-xl font-bold mb-4">ایجاد کاربر جدید</h2>
+            <h2 className="text-xl font-bold mb-4 text-gray-800">ایجاد کاربر جدید</h2>
             <form onSubmit={handleCreateUser}>
               <div className="space-y-3">
                 <input
@@ -143,7 +143,7 @@ const UserManagement: React.FC = () => {
                   placeholder="کد ملی *"
                   value={newUser.nationalCode}
                   onChange={(e) => setNewUser({...newUser, nationalCode: e.target.value})}
-                  className="w-full p-2 border rounded focus:border-blue-500 focus:outline-none"
+                  className="w-full text-gray-800 p-2 border rounded focus:border-blue-500 focus:outline-none"
                   required
                 />
                 <input
@@ -151,7 +151,7 @@ const UserManagement: React.FC = () => {
                   placeholder="نام *"
                   value={newUser.firstName}
                   onChange={(e) => setNewUser({...newUser, firstName: e.target.value})}
-                  className="w-full p-2 border rounded focus:border-blue-500 focus:outline-none"
+                  className="w-full text-gray-800 p-2 border rounded focus:border-blue-500 focus:outline-none"
                   required
                 />
                 <input
@@ -159,7 +159,7 @@ const UserManagement: React.FC = () => {
                   placeholder="نام خانوادگی *"
                   value={newUser.lastName}
                   onChange={(e) => setNewUser({...newUser, lastName: e.target.value})}
-                  className="w-full p-2 border rounded focus:border-blue-500 focus:outline-none"
+                  className="w-full text-gray-800 p-2 border rounded focus:border-blue-500 focus:outline-none"
                   required
                 />
                 <input
@@ -167,7 +167,7 @@ const UserManagement: React.FC = () => {
                   placeholder="نام پدر *"
                   value={newUser.fatherName}
                   onChange={(e) => setNewUser({...newUser, fatherName: e.target.value})}
-                  className="w-full p-2 border rounded focus:border-blue-500 focus:outline-none"
+                  className="w-full text-gray-800 p-2 border rounded focus:border-blue-500 focus:outline-none"
                   required
                 />
                 <input
@@ -175,13 +175,13 @@ const UserManagement: React.FC = () => {
                   placeholder="رمز عبور *"
                   value={newUser.password}
                   onChange={(e) => setNewUser({...newUser, password: e.target.value})}
-                  className="w-full p-2 border rounded focus:border-blue-500 focus:outline-none"
+                  className="w-full text-gray-800 p-2 border rounded focus:border-blue-500 focus:outline-none"
                   required
                 />
                 <select
                   value={newUser.role}
                   onChange={(e) => setNewUser({...newUser, role: e.target.value as 'USER' | 'ADMIN'})}
-                  className="w-full p-2 border rounded focus:border-blue-500 focus:outline-none"
+                  className="w-full text-gray-800 p-2 border rounded focus:border-blue-500 focus:outline-none"
                 >
                   <option value="USER">کاربر عادی</option>
                   <option value="ADMIN">مدیر</option>
@@ -211,7 +211,7 @@ const UserManagement: React.FC = () => {
       {/* لیست کاربران */}
       <div className="bg-white rounded-lg shadow">
         <div className="p-6 border-b">
-          <h2 className="text-xl font-bold">لیست کاربران</h2>
+          <h2 className="text-xl font-bold text-gray-800">لیست کاربران</h2>
         </div>
         <div className="p-6">
           {filteredUsers.length === 0 ? (
@@ -250,7 +250,7 @@ const UserManagement: React.FC = () => {
                       </div>
                       
                       <div>
-                        <h3 className="font-bold text-lg">
+                        <h3 className="font-bold text-lg text-gray-800">
                           {user.firstName} {user.lastName}
                         </h3>
                         <div className="grid grid-cols-2 gap-x-6 gap-y-1 text-sm text-gray-600">

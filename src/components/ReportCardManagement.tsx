@@ -118,7 +118,7 @@ const ReportCardManagement: React.FC = () => {
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
-        <h1 className="text-3xl font-bold">مدیریت کارنامه‌ها</h1>
+        <h1 className="text-3xl font-bold text-gray-700">مدیریت کارنامه‌ها</h1>
         <button
           onClick={() => setShowUploadForm(true)}
           className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
@@ -141,7 +141,7 @@ const ReportCardManagement: React.FC = () => {
             placeholder="جستجو بر اساس عنوان، نام دانش‌آموز، کد ملی، توضیحات..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="flex-1 p-2 border rounded focus:border-blue-500 focus:outline-none"
+            className="flex-1 p-2 text-gray-800 border rounded focus:border-blue-500 focus:outline-none"
           />
           <button
             onClick={filterReportCards}
@@ -235,7 +235,7 @@ const ReportCardManagement: React.FC = () => {
       {/* لیست کارنامه‌ها */}
       <div className="bg-white rounded-lg shadow">
         <div className="p-6 border-b">
-          <h2 className="text-xl font-bold">لیست کارنامه‌ها</h2>
+          <h2 className="text-xl font-bold text-gray-800">لیست کارنامه‌ها</h2>
         </div>
         <div className="p-6">
           {filteredReportCards.length === 0 ? (
@@ -276,7 +276,7 @@ const ReportCardManagement: React.FC = () => {
 
                         <div className="flex-1">
                           <h3 className="font-bold text-lg text-gray-800">{reportCard.title}</h3>
-                          <div className="grid grid-cols-2 gap-x-6 gap-y-1 text-sm text-gray-600 mt-2">
+                          <div className="grid grid-cols-2 gap-x-6 gap-y-1 text-sm text-gray-800 mt-2">
                             <div>
                               <span className="font-medium">دانش‌آموز:</span> 
                               {reportCard.user?.firstName} {reportCard.user?.lastName}
@@ -295,7 +295,7 @@ const ReportCardManagement: React.FC = () => {
                             </div>
                           </div>
                           {reportCard.description && (
-                            <p className="text-sm text-gray-600 mt-2">
+                            <p className="text-sm text-gray-800 mt-2">
                               <span className="font-medium">توضیحات:</span> {reportCard.description}
                             </p>
                           )}

@@ -9,7 +9,7 @@ const api = axios.create({
   withCredentials: false, // چون ما توکن می‌فرستیم، نیازی به cookie نیست
 });
 
-// 🧠 افزودن توکن JWT از sessionStorage یا localStorage به هر درخواست
+//  افزودن توکن JWT از sessionStorage یا localStorage به هر درخواست
 api.interceptors.request.use(
   (config) => {
     const token =

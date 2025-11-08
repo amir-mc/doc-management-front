@@ -97,13 +97,13 @@ const AdminDashboard: React.FC = () => {
         <div className="flex gap-4">
           <button
             onClick={handleRetry}
-            className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+            className="bg-blue-500 text-black px-4 py-2 rounded hover:bg-blue-600"
           >
             تلاش مجدد
           </button>
           <button
             onClick={handleLogout}
-            className="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600"
+            className="bg-gray-500 text-black px-4 py-2 rounded hover:bg-gray-600"
           >
             ورود مجدد
           </button>
@@ -135,7 +135,7 @@ const AdminDashboard: React.FC = () => {
         </div>
         <div className="p-6">
           {stats.recentUsers.length === 0 ? (
-            <p className="text-gray-500">هیچ کاربری یافت نشد.</p>
+            <p className="text-gray-800">هیچ کاربری یافت نشد.</p>
           ) : (
             <div className="space-y-4">
               {stats.recentUsers.map((user: User) => (
@@ -176,7 +176,7 @@ const AdminDashboard: React.FC = () => {
         </div>
         <div className="p-6">
           {stats.recentReportCards.length === 0 ? (
-            <p className="text-gray-500">هیچ کارنامه‌ای یافت نشد.</p>
+            <p className="text-gray-800">هیچ کارنامه‌ای یافت نشد.</p>
           ) : (
             <div className="space-y-4">
               {stats.recentReportCards.map((reportCard: ReportCard) => (
@@ -184,14 +184,14 @@ const AdminDashboard: React.FC = () => {
                   <div className="flex items-center justify-between">
                     <div className="flex-1">
                       <h4 className="font-semibold">{reportCard.title}</h4>
-                      <p className="text-sm text-gray-600">
+                      <p className="text-sm text-gray-800">
                         دانش‌آموز: {reportCard.user?.firstName} {reportCard.user?.lastName}
                       </p>
-                      <p className="text-sm text-gray-500">
+                      <p className="text-sm text-gray-800">
                         تاریخ: {new Date(reportCard.uploadedAt).toLocaleDateString('fa-IR')}
                       </p>
                       {reportCard.description && (
-                        <p className="text-sm text-gray-600 mt-1">
+                        <p className="text-sm text-gray-800 mt-1">
                           {reportCard.description}
                         </p>
                       )}
@@ -201,7 +201,7 @@ const AdminDashboard: React.FC = () => {
                         href={`http://localhost:3001/${reportCard.filePath}`}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="bg-blue-500 text-white px-3 py-1 rounded text-sm hover:bg-blue-600"
+                        className="bg-blue-500 text-black px-3 py-1 rounded text-sm hover:bg-blue-600"
                       >
                         مشاهده
                       </a>

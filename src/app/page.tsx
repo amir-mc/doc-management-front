@@ -16,8 +16,8 @@ const Home: React.FC = () => {
               onClick={() => setActiveTab('users')}
               className={`px-4 py-2 rounded ${
                 activeTab === 'users' 
-                  ? 'bg-blue-500 text-white' 
-                  : 'bg-white text-gray-700'
+                  ? 'bg-blue-500 text-black' 
+                  : 'bg-white text-gray-800'
               }`}
             >
               مدیریت کاربران
@@ -26,8 +26,8 @@ const Home: React.FC = () => {
               onClick={() => setActiveTab('reportCards')}
               className={`px-4 py-2 rounded ${
                 activeTab === 'reportCards' 
-                  ? 'bg-blue-500 text-white' 
-                  : 'bg-white text-gray-700'
+                  ? 'bg-blue-500 text-black' 
+                  : 'bg-white text-gray-800'
               }`}
             >
               مدیریت کارنامه‌ها
