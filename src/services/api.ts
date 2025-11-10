@@ -57,6 +57,9 @@ export const userApi = {
   // ایجاد کاربر جدید
   createUser: (userData: CreateUserRequest): Promise<User> =>
     api.post('/users', userData).then(response => response.data),
+  //ویرایش کاربر
+    updateUser: (userId: number, userData: UpdateUserRequest): Promise<User> =>
+    api.patch(`/users/${userId}`, userData).then(response => response.data),
 
   // آپلود عکس پروفایل
   uploadProfileImage: (userId: number, imageFile: File): Promise<User> => {
@@ -78,9 +81,9 @@ export const userApi = {
   getUserWithReportCards: (userId: number): Promise<User> =>
     api.get(`/users/${userId}/report-cards`).then(response => response.data),
 
-  // آپدیت کاربر
-  updateUser: (userId: number, userData: UpdateUserRequest): Promise<User> =>
-    api.patch(`/users/${userId}`, userData).then(response => response.data),
+  // // آپدیت کاربر
+  // updateUser: (userId: number, userData: UpdateUserRequest): Promise<User> =>
+  //   api.patch(`/users/${userId}`, userData).then(response => response.data),
 };
 
 // Report Cards API

@@ -80,9 +80,9 @@ const AdminPage: React.FC = () => {
         <div className="max-w-7xl mx-auto px-4">
           <div className="flex justify-between h-16">
             <div className="flex items-center">
-              <h1 className="text-xl font-bold">پنل مدیریت</h1>
+              <h1 className="text-xl font-bold text-gray-800">پنل مدیریت</h1>
             </div>
-            <div className="flex items-center space-x-4">
+            <div className="flex items-center space-x-4 text-gray-800">
               <span>خوش آمدید، {user.firstName} {user.lastName}</span>
               <button
                 onClick={handleLogout}
@@ -134,7 +134,7 @@ const AdminPage: React.FC = () => {
       </div>
 
       {/* محتوا */}
-      <div className="max-w-7xl mx-auto py-6 px-4">
+      <div className="max-w-7xl mx-auto py-6 px-4 text-gray-800">
         {activeTab === 'dashboard' && <AdminDashboard />}
         {activeTab === 'users' && <UserManagement />}
         {activeTab === 'reportCards' && <ReportCardManagement />}
