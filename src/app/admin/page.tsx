@@ -1,4 +1,3 @@
-//src/app/admin/page.tsx
 "use client";
 
 import React, { useState, useEffect } from 'react';
@@ -11,6 +10,7 @@ const AdminPage: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'dashboard' | 'users' | 'reportCards'>('dashboard');
   const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [isAdmin, setIsAdmin] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
@@ -31,15 +31,21 @@ const AdminPage: React.FC = () => {
     try {
       const userObj = JSON.parse(userData);
       console.log('🔍 Admin page - User role:', userObj.role);
+      console.log('🔍 Admin page - User data:', userObj);
       
+      // ابتدا کاربر را تنظیم می‌کنیم
+      setUser(userObj);
+      
+      // سپس بررسی می‌کنیم که آیا ادمین است یا نه
       if (userObj.role !== 'ADMIN') {
-        console.log('❌ Admin page - User is not ADMIN, redirecting to dashboard');
+        console.log('🔄 Admin page - User is not ADMIN, redirecting to dashboard');
         router.push('/dashboard');
         return;
       }
 
-      console.log('✅ Admin page - Authentication successful');
-      setUser(userObj);
+      console.log('✅ Admin page - User is ADMIN, allowing access');
+      setIsAdmin(true);
+      
     } catch (error) {
       console.error('❌ Admin page - Error parsing user data:', error);
       router.push('/login');
@@ -55,23 +61,51 @@ const AdminPage: React.FC = () => {
     router.push('/login');
   };
 
+  // اگر در حال لودینگ هستیم
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-lg">در حال بارگذاری...</div>
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-blue-500 mx-auto mb-4"></div>
+          <div className="text-lg text-gray-600">در حال بارگذاری...</div>
+          <div className="text-sm text-gray-500 mt-2">لطفاً کمی صبر کنید</div>
+        </div>
       </div>
     );
   }
 
+  // اگر کاربر ادمین نیست، محتوایی نشان ندهیم (در حال ریدایرکت است)
+  if (!isAdmin) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-blue-500 mx-auto mb-4"></div>
+          <div className="text-lg text-gray-600">در حال هدایت به پنل کاربری...</div>
+        </div>
+      </div>
+    );
+  }
+
+  // اگر کاربر وجود ندارد (این حالت نباید اتفاق بیفتد اگر isAdmin true باشد)
   if (!user) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-lg text-red-600">خطا در بارگذاری اطلاعات کاربر</div>
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100">
+        <div className="text-center">
+          <div className="text-4xl mb-4">❌</div>
+          <h2 className="text-xl font-bold text-gray-800 mb-2">خطا در بارگذاری اطلاعات</h2>
+          <p className="text-gray-600 mb-4">مشکلی در بارگذاری اطلاعات کاربر پیش آمده است.</p>
+          <button
+            onClick={() => router.push('/login')}
+            className="bg-blue-500 text-white px-6 py-2 rounded-lg hover:bg-blue-600 transition duration-200"
+          >
+            بازگشت به صفحه ورود
+          </button>
+        </div>
       </div>
     );
   }
 
-  console.log('🎯 Admin page - Rendering admin interface');
+  console.log('🎯 Admin page - Rendering admin interface for user:', user);
 
   return (
     <div className="min-h-screen bg-gray-50">
